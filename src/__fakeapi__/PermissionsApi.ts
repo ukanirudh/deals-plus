@@ -1,5 +1,5 @@
-import { Entity as EntityType, Structures as StructuresType, Roles, AllRoles } from "../types";
-import { Structures, EntityRoles } from './data';
+import { Entity as EntityType, Structures as StructuresType, Roles, AllRoles, User } from "../types";
+import { Structures, EntityRoles, Users } from './data';
 
 /* prepare data */
 const StructureRoles: {
@@ -7,16 +7,16 @@ const StructureRoles: {
 } = {};
 
 Structures.forEach((structure) => {
-    StructureRoles[structure] = [ AllRoles.FULL_ACCESS, AllRoles.BASIC_ACCESS, AllRoles.NO_ACCESS ];
+  StructureRoles[structure] = [AllRoles.FULL_ACCESS, AllRoles.BASIC_ACCESS, AllRoles.NO_ACCESS];
 });
 
-const AllEntities: {[key: string]: EntityType} = {}
+const AllEntities: { [key: string]: EntityType } = {}
 
 Structures.forEach((structure, index) => {
   if (index % 2 === 0) {
-    AllEntities[structure] =  { "England":["Topco", "Midco"] };
+    AllEntities[structure] = { "England": ["Topco", "Midco"] };
   } else {
-    AllEntities[structure] =  { "Luxemborg": ["Holdco", "Google", "Meta"] };
+    AllEntities[structure] = { "Luxemborg": ["Holdco", "Google", "Meta"] };
   }
 });
 
@@ -40,6 +40,10 @@ class PermissionsApi {
   getRolesForEntity(entity: string): Promise<Roles> {
     const rolesForEntity = EntityRoles[entity];
     return Promise.resolve(rolesForEntity);
+  }
+
+  getUsers(): Promise<Array<User>> {
+    return Promise.resolve(Users)
   }
 }
 

@@ -12,27 +12,28 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { DIALOG_STEPS } from '../constants';
 import Structures from './Structures';
+import Members from './Members';
 
-  
+
 const PermissionGroup = () => {
     const [open, setOpen] = useState<boolean>(true);
     const [curStep, setCurrentStep] = useState<number>(0);
-    const handleNext = () => setCurrentStep((prev) => prev+1);
+    const handleNext = () => setCurrentStep((prev) => prev + 1);
 
     return (
         <Dialog fullWidth maxWidth={'md'} onClose={() => setOpen(false)} open={open}>
             <DialogTitle>
                 <IconButton color="primary" aria-label="add to shopping cart">
-                    <GroupAddIcon /> 
+                    <GroupAddIcon />
                 </IconButton>
                 Create a new permissions group
             </DialogTitle>
             <DialogContent dividers>
                 <Stepper activeStep={curStep} alternativeLabel>
                     {DIALOG_STEPS.map((label) => (
-                    <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                    </Step>
+                        <Step key={label}>
+                            <StepLabel>{label}</StepLabel>
+                        </Step>
                     ))}
                 </Stepper>
             </DialogContent>
@@ -47,7 +48,7 @@ const PermissionGroup = () => {
                     curStep === 2 && <>2</>
                 }
                 {
-                    curStep === 3 && <>3</>
+                    curStep === 3 && <Members />
                 }
             </DialogContent>
             <DialogActions>

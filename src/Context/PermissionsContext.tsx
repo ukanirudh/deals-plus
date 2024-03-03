@@ -1,14 +1,26 @@
-import React, { useContext, useState, createContext , ReactElement, ReactNode } from 'react'
+import React, { useContext, useState, createContext, ReactElement, ReactNode } from 'react'
+import { Roles } from '../types';
 
-const PermissionContext = createContext({});
+interface PermissionState {
+    groupName: string;
+    structuresData: { [key: string]: Roles }
+    users: { [key: string]: boolean }
+}
 
-const usePersmissionContext = () => useContext(PermissionContext);
+interface ContextProps {
+    permissionState: PermissionState | null;
+    setPermissionsState: any;
+}
 
-const PermissionContextWrapper = ({children}: { children: ReactNode }): ReactElement => {
-    const [permissionState, setPermissionsState] = useState({});
+const PermissionContext = createContext<ContextProps>({ permissionState: null, setPermissionsState: null });
+
+export const usePersmissionContext = (): ContextProps => useContext(PermissionContext);
+
+const PermissionContextWrapper = ({ children }: { children: ReactNode }): ReactElement => {
+    const [permissionState, setPermissionsState] = useState({ groupName: '', structuresData: {}, users: {} });
 
     return (
-        <PermissionContext.Provider value={{permissionState, setPermissionsState}}>
+        <PermissionContext.Provider value={{ permissionState, setPermissionsState }}>
             {children}
         </PermissionContext.Provider>
     )

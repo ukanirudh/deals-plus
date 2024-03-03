@@ -7,6 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { usePersmissionContext } from '../Context/PermissionsContext';
 
 export enum ClassificationType {
     STRUCTURE = 'STRUCTURE',
@@ -19,6 +20,7 @@ interface RolesProps {
 }
 
 const Roles = ({ classification, name }: RolesProps): ReactElement => {
+    const { setPermissionsState } = usePersmissionContext();
     const [roles, setRoles] = useState<RolesType>([]);
     const [selectedRole, setSelectedRole] = useState<AllRoles>(AllRoles.NO_ACCESS);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -37,6 +39,7 @@ const Roles = ({ classification, name }: RolesProps): ReactElement => {
         selectedRole: AllRoles,
     ) => {
         setSelectedRole(selectedRole);
+        setPermissionsState((prev: any) => ({ ...prev, [name]: selectedRole }))
         setAnchorEl(null);
     };
 
@@ -58,13 +61,9 @@ const Roles = ({ classification, name }: RolesProps): ReactElement => {
 
     return (
         <>
-            <List component="nav">
-                <ListItemButton
-                    onClick={handleClickListItem}
-                >
-                    <ListItemText
-                        primary={selectedRole}
-                    />
+            <List component="nav" sx={{ maxWidth: 160, float: 'right' }}>
+                <ListItemButton onClick={handleClickListItem}>
+                    <ListItemText primary={selectedRole} />
                     <ExpandMore />
                 </ListItemButton>
             </List>

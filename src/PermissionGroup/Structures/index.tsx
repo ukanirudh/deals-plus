@@ -14,9 +14,11 @@ import { APP_LABELS } from '../../constants/labels';
 import PermissionsApi from '../../__fakeapi__/PermissionsApi';
 import { Structures as StructuresType } from '../../types';
 import Roles, { ClassificationType } from '../Roles';
+import { usePersmissionContext } from '../../Context/PermissionsContext';
 
 const Structures = (): ReactElement => {
     const [structures, setStructures] = useState<StructuresType>([]);
+    const { permissionState } = usePersmissionContext();
 
     useEffect(() => {
         const fetchStructures = async () => {
