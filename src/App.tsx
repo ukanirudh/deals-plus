@@ -1,6 +1,7 @@
 import React from 'react';
 import PermissionGroup from './PermissionGroup';
 import PermissionContextWrapper from './Context/PermissionsContext';
+import './App.css';
 
 function App() {
   return (

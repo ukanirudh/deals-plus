@@ -8,13 +8,23 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+import { styled } from '@mui/material/styles';
 
 import { APP_LABELS } from '../../constants/labels';
 import PermissionsApi from '../../__fakeapi__/PermissionsApi';
 import { Structures as StructuresType } from '../../types';
 import Roles, { ClassificationType } from '../Roles';
 import { usePersmissionContext } from '../../Context/PermissionsContext';
+
+const SearchToolBar = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(4),
+    margin: `${theme.spacing(2)} 0`,
+}));
 
 const Structures = (): ReactElement => {
     const [structures, setStructures] = useState<StructuresType>([]);
@@ -36,6 +46,21 @@ const Structures = (): ReactElement => {
             <Typography variant="body2" display="block" gutterBottom>
                 {APP_LABELS.structures_step.helper_text}
             </Typography>
+            <SearchToolBar>
+                <TextField
+                    sx={{ flex: 1 }}
+                    label="Search"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                        ),
+                    }}
+                    variant="outlined"
+                />
+                <Typography variant="body2" gutterBottom>{structures.length}</Typography>
+            </SearchToolBar>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
