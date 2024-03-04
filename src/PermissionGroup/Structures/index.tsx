@@ -1,42 +1,55 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import { styled } from '@mui/material/styles';
 
 import { APP_LABELS } from '../../constants/labels';
 import PermissionsApi from '../../__fakeapi__/PermissionsApi';
-import { Structures as StructuresType } from '../../types';
-import Roles, { ClassificationType } from '../Roles';
+import { Structures as StructuresType, AllRoles } from '../../types';
 import { usePersmissionContext } from '../../Context/PermissionsContext';
+import { SearchToolBar } from './Structures.Styled';
+import StructuresList from './StructuresList';
 
-const SearchToolBar = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing(4),
-    margin: `${theme.spacing(2)} 0`,
-}));
+const getGeneratedStructuresData = (allStructures: StructuresType) => {
+    let generatedStructureData: { [key: string]: { isSelected: boolean, selectedRole: AllRoles } } = {};
+    allStructures.forEach((structureName) => {
+        generatedStructureData[structureName] = {
+            isSelected: false,
+            selectedRole: AllRoles.NO_ACCESS
+        }
+    });
+    return generatedStructureData;
+}
 
 const Structures = (): ReactElement => {
     const [structures, setStructures] = useState<StructuresType>([]);
-    const { permissionState } = usePersmissionContext();
+    const [filteredStructures, setFilteredStructures] = useState<StructuresType>([]);
+    const { setPermissionsState } = usePersmissionContext();
 
     useEffect(() => {
         const fetchStructures = async () => {
-            const allStructures = await PermissionsApi.getStructures();
-            setStructures(allStructures);
+            try {
+                const allStructures = await PermissionsApi.getStructures();
+                setPermissionsState((prev) => ({ ...prev, structuresData: getGeneratedStructuresData(allStructures) }))
+                setStructures(allStructures);
+                setFilteredStructures(allStructures);
+            } catch (e) {
+
+            }
         }
         fetchStructures();
     }, []);
+
+    const onSearch = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const searchStr = e.target.value;
+        if (searchStr) {
+            const searchMatches = structures.filter((structure) => structure.toLowerCase().includes(searchStr.toLowerCase()));
+            setFilteredStructures(searchMatches);
+        } else {
+            setFilteredStructures(structures);
+        }
+    }
 
     return (
         <>
@@ -58,52 +71,11 @@ const Structures = (): ReactElement => {
                         ),
                     }}
                     variant="outlined"
+                    onChange={onSearch}
                 />
-                <Typography variant="body2" gutterBottom>{structures.length}</Typography>
+                <Typography variant="body2" gutterBottom>{filteredStructures.length}</Typography>
             </SearchToolBar>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell padding="checkbox">
-                                <Checkbox
-                                    color="primary"
-                                />
-                            </TableCell>
-                            <TableCell>Structure</TableCell>
-                            <TableCell align="right">Role</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            structures.map((curStructure, index) => {
-                                return (
-                                    <TableRow
-                                        key={`${curStructure}-${index}`}
-                                        hover
-                                    >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                color="primary"
-                                            />
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            id={`${curStructure}-${index}`}
-                                            scope="row"
-                                        >
-                                            {curStructure}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Roles classification={ClassificationType.STRUCTURE} name={curStructure} />
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            })
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <StructuresList structuresToDsiplay={filteredStructures} />
         </>
     )
 }

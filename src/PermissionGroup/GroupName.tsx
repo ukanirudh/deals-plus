@@ -24,7 +24,7 @@ const GroupName = () => {
                     label="Group Name"
                     helperText="A descriptive name will help identify it in the future"
                     value={permissionState?.groupName}
-                    onChange={(e) => setPermissionsState((prev: any) => ({ ...prev, groupName: e.target.value }))}
+                    onChange={(e) => setPermissionsState((prev) => ({ ...prev, groupName: e.target.value }))}
                 />
             </div>
         </GroupNameDiv>

@@ -20,9 +20,11 @@ interface RolesProps {
 }
 
 const Roles = ({ classification, name }: RolesProps): ReactElement => {
-    const { setPermissionsState } = usePersmissionContext();
+    const { setPermissionsState, permissionState } = usePersmissionContext();
+    const curStructuresData = permissionState?.structuresData || {};
+    const currentRole = curStructuresData[name]?.selectedRole;
+
     const [roles, setRoles] = useState<RolesType>([]);
-    const [selectedRole, setSelectedRole] = useState<AllRoles>(AllRoles.NO_ACCESS);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const open = Boolean(anchorEl);
@@ -38,8 +40,8 @@ const Roles = ({ classification, name }: RolesProps): ReactElement => {
         event: React.MouseEvent<HTMLElement>,
         selectedRole: AllRoles,
     ) => {
-        setSelectedRole(selectedRole);
-        setPermissionsState((prev: any) => ({ ...prev, [name]: selectedRole }))
+        const updatedStrutures = { ...curStructuresData, [name]: { ...curStructuresData[name], selectedRole } }
+        setPermissionsState((prev) => ({ ...prev, structuresData: updatedStrutures }))
         setAnchorEl(null);
     };
 
@@ -63,7 +65,7 @@ const Roles = ({ classification, name }: RolesProps): ReactElement => {
         <>
             <List component="nav" sx={{ maxWidth: 160, float: 'right' }}>
                 <ListItemButton onClick={handleClickListItem}>
-                    <ListItemText primary={selectedRole} />
+                    <ListItemText primary={currentRole} />
                     <ExpandMore />
                 </ListItemButton>
             </List>
@@ -77,7 +79,7 @@ const Roles = ({ classification, name }: RolesProps): ReactElement => {
                 {roles.map((curRole) => (
                     <MenuItem
                         key={curRole}
-                        selected={selectedRole === curRole}
+                        selected={currentRole === curRole}
                         onClick={(event) => handleMenuItemClick(event, curRole)}
                     >
                         {curRole}

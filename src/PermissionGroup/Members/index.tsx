@@ -26,7 +26,7 @@ const Members = (): ReactElement => {
     const handleToggle = (event: ChangeEvent<HTMLInputElement>, userEmail: string) => {
         const curUsers = permissionState?.users || {};
         const updatedUsers = { ...curUsers, [userEmail]: event.target.checked }
-        setPermissionsState((prev: any) => ({ ...prev, users: updatedUsers }))
+        setPermissionsState((prev) => ({ ...prev, users: updatedUsers }))
     }
 
     return (

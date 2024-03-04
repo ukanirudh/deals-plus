@@ -1,23 +1,25 @@
-import React, { useContext, useState, createContext, ReactElement, ReactNode } from 'react'
-import { Roles } from '../types';
+import React, { useContext, useState, createContext, ReactElement, ReactNode, Dispatch, SetStateAction } from 'react'
+import { AllRoles } from '../types';
+
+export type StructuresContextData = { [key: string]: { isSelected: boolean, selectedRole: AllRoles } };
 
 interface PermissionState {
     groupName: string;
-    structuresData: { [key: string]: Roles }
+    structuresData: StructuresContextData;
     users: { [key: string]: boolean }
 }
 
 interface ContextProps {
     permissionState: PermissionState | null;
-    setPermissionsState: any;
+    setPermissionsState: Dispatch<SetStateAction<PermissionState>>;
 }
 
-const PermissionContext = createContext<ContextProps>({ permissionState: null, setPermissionsState: null });
+const PermissionContext = createContext<ContextProps>({ permissionState: null, setPermissionsState: () => { } });
 
 export const usePersmissionContext = (): ContextProps => useContext(PermissionContext);
 
 const PermissionContextWrapper = ({ children }: { children: ReactNode }): ReactElement => {
-    const [permissionState, setPermissionsState] = useState({ groupName: '', structuresData: {}, users: {} });
+    const [permissionState, setPermissionsState] = useState<PermissionState>({ groupName: '', structuresData: {}, users: {} });
 
     return (
         <PermissionContext.Provider value={{ permissionState, setPermissionsState }}>
